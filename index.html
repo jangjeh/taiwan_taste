@@ -1190,17 +1190,21 @@
             updateTabStyles();
         }
 
-        // --- Create Single Card HTML ---
+// --- Create Single Card HTML ---
         function createCard(item) {
             const price = '$'.repeat(item.price_level);
-            // Default to empty array if tags are missing to prevent error
+            
+            // 태그가 없는 경우 에러 방지
             const tags = item.tags || [];
             const tagsHTML = tags.map(tag => 
                 `<span class="inline-block bg-slate-100 text-slate-600 rounded-full px-2 py-0.5 text-xs font-medium mr-1 mb-1">#${tag}</span>`
             ).join('');
             
-            // Generate Google Maps URL if missing (fallback)
-            const mapUrl = item.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name_kr + " " + item.sub_area + " Taipei")}`;
+            // 🔴 [핵심 변경] 구글 맵 검색 정확도 향상 로직
+            // 기존 데이터의 URL을 무시하고, '중문명 + 영문명'으로 검색 링크를 강제 생성합니다.
+            // 예: "阜杭豆漿 Fuhang Soy Milk" 로 검색
+            const searchQuery = `${item.name_cn} ${item.name_en}`;
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchQuery)}`;
 
             return `
                 <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full border border-slate-100">
